@@ -2,6 +2,11 @@
 Changelog
 =======
 
+0.2.0 (07OCT21)
+------------------
+
+* Initial python package skeleton
+
 0.1.0 (07OCT21)
 ------------------
 
