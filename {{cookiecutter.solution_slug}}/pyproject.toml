@@ -1,0 +1,31 @@
+[tool]
+[tool.poetry]
+name = "{{ cookiecutter.solution_slug }}"
+version = "{{ cookiecutter.version }}"
+homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.solution_slug }}"
+description = "Top-level package for {{ cookiecutter.project_name }}."
+authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
+readme = "README.rst"
+license = "MIT"
+classifiers=[
+    'Development Status :: 2 - Pre-Alpha',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License'
+    'Natural Language :: English',
+    'Programming Language :: Python :: 3.8',
+]
+packages = [
+    { include = "{{ cookiecutter.solution_slug }}" },
+    { include = "tests", format = "sdist" },
+]
+
+[tool.poetry.dependencies]
+python = "*"
+click = "*"
+
+[tool.poetry.scripts]
+{{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
