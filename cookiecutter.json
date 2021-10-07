@@ -4,4 +4,5 @@
   , "github_username": "nosuchuser"
   , "solution_name": "Python Boilerplate"
   , "solution_slug": "{{ cookiecutter.solution_name.lower().replace(' ', '_').replace('-', '_') }}"
+  , "version": "0.1.0"
 }
