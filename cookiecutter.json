@@ -1,0 +1,4 @@
+{
+    "solution_name": "Python Boilerplate"
+  , "solution_slug": "{{ cookiecutter.solution_name.lower().replace(' ', '_').replace('-', '_') }}"
+}
