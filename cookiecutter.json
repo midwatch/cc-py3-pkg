@@ -1,0 +1,7 @@
+{
+    "full_name": "First Last"
+  , "email": "midwatch@example.com"
+  , "github_username": "nosuchuser"
+  , "solution_name": "Python Boilerplate"
+  , "solution_slug": "{{ cookiecutter.solution_name.lower().replace(' ', '_').replace('-', '_') }}"
+}
