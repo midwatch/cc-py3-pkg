@@ -8,7 +8,7 @@ from invoke import task
 def scm_push(ctx):
     """Push all branches and tags to origin."""
 
-    for branch in ('develop', 'master'):
+    for branch in ('develop', 'main'):
         ctx.run('git push origin {}'.format(branch))
 
     ctx.run('git push --tags')
