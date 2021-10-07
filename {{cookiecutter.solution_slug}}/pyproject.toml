@@ -3,7 +3,7 @@
 name = "{{ cookiecutter.solution_slug }}"
 version = "{{ cookiecutter.version }}"
 homepage = "https://github.com/{{ cookiecutter.github_username }}/{{ cookiecutter.solution_slug }}"
-description = "Top-level package for {{ cookiecutter.project_name }}."
+description = "Top-level package for {{ cookiecutter.solution_name }}."
 authors = ["{{ cookiecutter.full_name.replace('\"', '\\\"') }} <{{ cookiecutter.email }}>"]
 readme = "README.rst"
 license = "MIT"
