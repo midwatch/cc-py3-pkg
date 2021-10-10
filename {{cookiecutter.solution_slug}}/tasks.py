@@ -10,6 +10,29 @@ CC_VERSION = "{{ cookiecutter.version }}"
 
 
 @task
+def clean_build(ctx):
+    """
+    Clean up files from package building
+    """
+    ctx.run(ctx, "rm -fr build/")
+    ctx.run(ctx, "rm -fr dist/")
+    ctx.run(ctx, "rm -fr .eggs/")
+    ctx.run(ctx, "find . -name '*.egg-info' -exec rm -fr {} +")
+    ctx.run(ctx, "find . -name '*.egg' -exec rm -f {} +")
+
+
+@task
+def clean_python(ctx):
+    """
+    Clean up python file artifacts
+    """
+    ctx.run(ctx, "find . -name '*.pyc' -exec rm -f {} +")
+    ctx.run(ctx, "find . -name '*.pyo' -exec rm -f {} +")
+    ctx.run(ctx, "find . -name '*~' -exec rm -f {} +")
+    ctx.run(ctx, "find . -name '__pycache__' -exec rm -fr {} +")
+
+
+@task
 def scm_init(ctx):
     """Init scm repo (if required).
 
@@ -51,6 +74,22 @@ def scm_status(ctx):
     ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
 
 
+@task(clean)
+def build(ctx):
+    """
+    Build source and wheel packages
+    """
+    ctx.run(ctx, "poetry build")
+
+
+@task(pre=[clean_build, clean_python])
+def clean(ctx):
+    """
+    Runs all clean sub-tasks
+    """
+    pass
+
+
 @task
 def init(ctx):
     """Initialize freshly cloned repo."""
@@ -64,9 +103,17 @@ def init(ctx):
     scm_push(ctx)
 
 
+@task(pre=[clean, build])
+def release(ctx):
+    """
+    Make a release of the python package to pypi
+    """
+    ctx.run(ctx, "poetry publish")
+
+
 scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(init)
+ns = Collection(build, clean, init)
 ns.add_collection(scm, name="scm")
