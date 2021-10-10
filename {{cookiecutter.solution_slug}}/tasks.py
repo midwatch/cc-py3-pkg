@@ -30,6 +30,7 @@ def scm_init(ctx):
         ctx.run('git init')
         ctx.run('git add .')
         ctx.run('git commit -m "new package from midwatch/cc-py3-pkg ({})"'.format(CC_VERSION))
+        ctx.run('git branch -M main')
         ctx.run('git remote add origin {}'.format(uri_remote))
         ctx.run('git tag -a "v_0.0.0" -m "cookiecutter ref"')
 
@@ -50,9 +51,13 @@ def scm_status(ctx):
     ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
 
 
-@task(scm_init)
+@task
 def init(ctx):
     """Initialize freshly cloned repo."""
+    ctx.run('poetry install')
+
+    scm_init(ctx)
+
     ctx.run('git flow init -d')
     ctx.run('git flow config set versiontagprefix v_')
 
