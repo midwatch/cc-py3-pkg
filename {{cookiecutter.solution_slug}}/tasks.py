@@ -5,6 +5,7 @@ from invoke import task
 from invoke.exceptions import Failure
 
 GITHUB_USERNAME = "{{ cookiecutter.github_username }}"
+GITHUB_SLUG = "{{ cookiecutter.github_slug }}"
 SOLUTION_SLUG = "{{ cookiecutter.solution_slug }}"
 CC_VERSION = "{{ cookiecutter.version }}"
 
@@ -47,7 +48,7 @@ def scm_init(ctx):
 
     if not Path('.git').is_dir():
         uri_remote = 'git@github.com:{}/{}.git'.format(GITHUB_USERNAME,
-                                                       SOLUTION_SLUG
+                                                       GITHUB_SLUG
                                                       )
 
         ctx.run('git init')
