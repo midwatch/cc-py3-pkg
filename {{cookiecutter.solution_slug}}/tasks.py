@@ -106,7 +106,7 @@ def build(ctx):
 
 @task
 def init(ctx):
-    """Initialize freshly cloned repo."""
+    """Initialize freshly cloned repo"""
     ctx.run('poetry install')
 
     scm_init(ctx)
@@ -125,9 +125,15 @@ def release(ctx):
     ctx.run(ctx, "poetry publish")
 
 
+@task
+def test(ctx):
+    """Run tests"""
+    ctx.run('poetry run pytest')
+
+
 scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(build, bumpversion, clean, init)
+ns = Collection(build, bumpversion, clean, init, test)
 ns.add_collection(scm, name="scm")
