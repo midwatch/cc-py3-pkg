@@ -74,20 +74,20 @@ def scm_status(ctx):
     ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
 
 
-@task(clean)
-def build(ctx):
-    """
-    Build source and wheel packages
-    """
-    ctx.run(ctx, "poetry build")
-
-
 @task(pre=[clean_build, clean_python])
 def clean(ctx):
     """
     Runs all clean sub-tasks
     """
     pass
+
+
+@task(clean)
+def build(ctx):
+    """
+    Build source and wheel packages
+    """
+    ctx.run(ctx, "poetry build")
 
 
 @task
