@@ -77,7 +77,14 @@ def scm_status(ctx):
 
 @task(help={'part': "major, minor, or patch"})
 def bumpversion(ctx, part):
-    """Bump project version"""
+    """Bump project version
+
+    Raises:
+        Failure: part not in [major, minor, patch]
+    """
+    if part not in ['major', 'minor', 'patch']:
+        raise Failure('Not a valid part')
+
     ctx.run(f'poetry run bump2version {part}')
 
 
