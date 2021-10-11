@@ -75,6 +75,12 @@ def scm_status(ctx):
     ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
 
 
+@task(help={'part': "major, minor, or patch"})
+def bumpversion(ctx, part):
+    """Bump project version"""
+    ctx.run(f'poetry run bump2version {part}')
+
+
 @task(pre=[clean_build, clean_python])
 def clean(ctx):
     """
@@ -116,5 +122,5 @@ scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(build, clean, init)
+ns = Collection(build, bumpversion, clean, init)
 ns.add_collection(scm, name="scm")

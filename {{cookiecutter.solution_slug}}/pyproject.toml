@@ -20,8 +20,9 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "*"
+bump2version = "*"
 click = "*"
+python = "*"
 
 [tool.poetry.scripts]
 {{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'
