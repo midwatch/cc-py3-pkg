@@ -4,6 +4,7 @@ import sys
 
 import click
 
+
 @click.command()
 def main():
     """Console script for {{cookiecutter.solution_slug}}."""

@@ -29,6 +29,7 @@ bump2version = "*"
 pylint = "*"
 pytest = "*"
 pycodestyle = "*"
+pydocstyle = "*"
 
 [tool.poetry.scripts]
 {{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'

@@ -46,6 +46,12 @@ def lint_pycodestyle(ctx):
 
 
 @task
+def lint_pydocstyle(ctx):
+    """Lint code with pydocstyle"""
+    ctx.run(f'poetry run pydocstyle {SOURCE_DIR}')
+
+
+@task
 def lint_pylint(ctx):
     """Lint code with pylint"""
     ctx.run(f'poetry run pylint {PYTHON_DIRS_STR}')
@@ -135,9 +141,10 @@ def init(ctx):
     scm_push(ctx)
 
 
-@task(lint_pylint, lint_pycodestyle)
+@task(lint_pylint, lint_pycodestyle, lint_pydocstyle)
 def lint(ctx):
     """Run all linters"""
+
 
 @task(pre=[clean, build])
 def release(ctx):
