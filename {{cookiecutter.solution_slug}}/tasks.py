@@ -9,6 +9,12 @@ GITHUB_SLUG = "{{ cookiecutter.github_slug }}"
 SOLUTION_SLUG = "{{ cookiecutter.solution_slug }}"
 CC_VERSION = "{{ cookiecutter.version }}"
 
+ROOT_DIR = Path(__file__).parent
+SOURCE_DIR = ROOT_DIR.joinpath("{{ cookiecutter.solution_slug }}")
+TEST_DIR = ROOT_DIR.joinpath("tests")
+
+PYTHON_DIRS_STR = " ".join([str(_dir) for _dir in [SOURCE_DIR, TEST_DIR]])
+
 
 @task
 def clean_build(ctx):
@@ -31,6 +37,18 @@ def clean_python(ctx):
     ctx.run(ctx, "find . -name '*.pyo' -exec rm -f {} +")
     ctx.run(ctx, "find . -name '*~' -exec rm -f {} +")
     ctx.run(ctx, "find . -name '__pycache__' -exec rm -fr {} +")
+
+
+@task
+def lint_pycodestyle(ctx):
+    """Lint code with pycodestyle"""
+    ctx.run(f'poetry run pycodestyle --max-line-length=120 {SOURCE_DIR}')
+
+
+@task
+def lint_pylint(ctx):
+    """Lint code with pylint"""
+    ctx.run(f'poetry run pylint {PYTHON_DIRS_STR}')
 
 
 @task
@@ -117,6 +135,10 @@ def init(ctx):
     scm_push(ctx)
 
 
+@task(lint_pylint, lint_pycodestyle)
+def lint(ctx):
+    """Run all linters"""
+
 @task(pre=[clean, build])
 def release(ctx):
     """
@@ -135,5 +157,5 @@ scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(build, bumpversion, clean, init, test)
+ns = Collection(build, bumpversion, clean, init, lint, test)
 ns.add_collection(scm, name="scm")

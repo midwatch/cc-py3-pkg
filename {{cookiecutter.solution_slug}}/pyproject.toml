@@ -14,6 +14,7 @@ classifiers=[
     'Natural Language :: English',
     'Programming Language :: Python :: 3.8',
 ]
+
 packages = [
     { include = "{{ cookiecutter.solution_slug }}" },
     { include = "tests", format = "sdist" },
@@ -21,11 +22,13 @@ packages = [
 
 [tool.poetry.dependencies]
 click = "*"
-python = "*"
+python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 bump2version = "*"
+pylint = "*"
 pytest = "*"
+pycodestyle = "*"
 
 [tool.poetry.scripts]
 {{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'
