@@ -2,7 +2,7 @@
 Cookiecutter PyPackage
 ======================
 
-Cookiecutter_ template for a Basic Python CLI Application, inspired by and cribbed from
+Cookiecutter_ template for a Basic Python CLI Application; inspired by and cribbed from
 `briggySmalls/cookiecutter-pypackage`_
 
 * GitHub repo: https://github.com/midwatch/cc-py3-pkg
