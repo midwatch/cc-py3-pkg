@@ -21,11 +21,11 @@ def clean_build(ctx):
     """
     Clean up files from package building
     """
-    ctx.run(ctx, "rm -fr build/")
-    ctx.run(ctx, "rm -fr dist/")
-    ctx.run(ctx, "rm -fr .eggs/")
-    ctx.run(ctx, "find . -name '*.egg-info' -exec rm -fr {} +")
-    ctx.run(ctx, "find . -name '*.egg' -exec rm -f {} +")
+    ctx.run("rm -fr build/")
+    ctx.run("rm -fr dist/")
+    ctx.run("rm -fr .eggs/")
+    ctx.run("find . -name '*.egg-info' -exec rm -fr {} +")
+    ctx.run("find . -name '*.egg' -exec rm -f {} +")
 
 
 @task
@@ -33,10 +33,10 @@ def clean_python(ctx):
     """
     Clean up python file artifacts
     """
-    ctx.run(ctx, "find . -name '*.pyc' -exec rm -f {} +")
-    ctx.run(ctx, "find . -name '*.pyo' -exec rm -f {} +")
-    ctx.run(ctx, "find . -name '*~' -exec rm -f {} +")
-    ctx.run(ctx, "find . -name '__pycache__' -exec rm -fr {} +")
+    ctx.run("find . -name '*.pyc' -exec rm -f {} +")
+    ctx.run("find . -name '*.pyo' -exec rm -f {} +")
+    ctx.run("find . -name '*~' -exec rm -f {} +")
+    ctx.run("find . -name '__pycache__' -exec rm -fr {} +")
 
 
 @task
@@ -125,7 +125,7 @@ def build(ctx):
     """
     Build source and wheel packages
     """
-    ctx.run(ctx, "poetry build")
+    ctx.run("poetry build")
 
 
 @task(help={'check': "Checks if source is formatted without applying changes"})
@@ -161,7 +161,7 @@ def release(ctx):
     """
     Make a release of the python package to pypi
     """
-    ctx.run(ctx, "poetry publish")
+    ctx.run("poetry publish")
 
 
 @task
