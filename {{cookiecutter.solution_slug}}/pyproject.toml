@@ -10,18 +10,28 @@ license = "MIT"
 classifiers=[
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License'
+    'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
     'Programming Language :: Python :: 3.8',
 ]
+
 packages = [
     { include = "{{ cookiecutter.solution_slug }}" },
     { include = "tests", format = "sdist" },
 ]
 
 [tool.poetry.dependencies]
-python = "*"
 click = "*"
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+bump2version = "*"
+isort = "*"
+pycodestyle = "*"
+pydocstyle = "*"
+pylint = "*"
+pytest = "*"
+yapf = "*"
 
 [tool.poetry.scripts]
 {{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'
