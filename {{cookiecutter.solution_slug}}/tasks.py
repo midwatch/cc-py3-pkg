@@ -128,6 +128,16 @@ def build(ctx):
     ctx.run(ctx, "poetry build")
 
 
+@task(help={'check': "Checks if source is formatted without applying changes"})
+def format(ctx, check=False):
+    """Format code"""
+    yapf_options = '--recursive {}'.format('--diff' if check else '--in-place')
+    ctx.run(f'poetry run yapf {yapf_options} {PYTHON_DIRS_STR}')
+
+    isort_options = '{}'.format('--check-only --diff' if check else '')
+    ctx.run(f'poetry run isort {isort_options} {PYTHON_DIRS_STR}')
+
+
 @task
 def init(ctx):
     """Initialize freshly cloned repo"""
@@ -164,5 +174,5 @@ scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(build, bumpversion, clean, init, lint, test)
+ns = Collection(build, bumpversion, clean, format, init, lint, test)
 ns.add_collection(scm, name="scm")

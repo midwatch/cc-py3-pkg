@@ -26,10 +26,12 @@ python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 bump2version = "*"
-pylint = "*"
-pytest = "*"
+isort = "*"
 pycodestyle = "*"
 pydocstyle = "*"
+pylint = "*"
+pytest = "*"
+yapf = "*"
 
 [tool.poetry.scripts]
 {{ cookiecutter.solution_slug }} = '{{ cookiecutter.solution_slug }}.cli:main'
