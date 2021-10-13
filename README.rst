@@ -35,7 +35,7 @@ Features
 Limitations
 --------
 
-* No tox testing. Intended for a single deployment target only (eg Ubuntu 20.04 LTS/Python 3.8.x)
+* No tox_ testing. Intended for a single deployment target only (eg Ubuntu 20.04 LTS/Python 3.8.x)
 * Intended for Pyton CLI apps installed per user using pipx_
 * Host dependencies need to be manually installed before installing app
 
@@ -53,3 +53,4 @@ Quickstart
 .. _pylint: https://www.pylint.org/
 .. _vagrant: https://www.vagrantup.com/
 .. _yapf: https://github.com/google/yapf
+.. _tox: https://tox.wiki/en/latest/index.html
