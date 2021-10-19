@@ -2,6 +2,16 @@
 Changelog
 =======
 
+0.3.1 (13OCT21)
+------------------
+
+Fixed minor template issues:
+
+* use repo_slug instead of solution_slug for solution directory
+* change default version from 0.1.0 to 0.0.0
+* add release to inv namespace
+
+
 0.3.0 (13OCT21)
 ------------------
 
