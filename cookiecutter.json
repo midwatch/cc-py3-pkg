@@ -6,5 +6,5 @@
   , "github_slug": "{{ cookiecutter.solution_name.lower().replace(' ', '-').replace('_', '-') }}"
   , "solution_slug": "{{ cookiecutter.solution_name.lower().replace(' ', '_').replace('-', '_') }}"
   , "solution_short_description": "Python Boilerplate contains all the boilerplate you need to create a Python package."
-  , "version": "0.1.0"
+  , "version": "0.0.0"
 }
