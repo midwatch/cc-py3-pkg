@@ -4,15 +4,20 @@ from invoke import Collection
 from invoke import task
 from invoke.exceptions import Failure
 
+from pathlib import Path
+
+from invoke import Collection
+from invoke import task
+from invoke.exceptions import Failure
+
 GITHUB_USERNAME = "{{ cookiecutter.github_username }}"
 GITHUB_SLUG = "{{ cookiecutter.github_slug }}"
 SOLUTION_SLUG = "{{ cookiecutter.solution_slug }}"
-CC_VERSION = "{{ cookiecutter.version }}"
+CC_VERSION = "0.0.0"
 
 ROOT_DIR = Path(__file__).parent
-SOURCE_DIR = ROOT_DIR.joinpath("{{ cookiecutter.solution_slug }}")
+SOURCE_DIR = ROOT_DIR.joinpath(SOLUTION_SLUG)
 TEST_DIR = ROOT_DIR.joinpath("tests")
-
 PYTHON_DIRS_STR = " ".join([str(_dir) for _dir in [SOURCE_DIR, TEST_DIR]])
 
 
@@ -57,8 +62,7 @@ def lint_pylint(ctx):
     ctx.run(f'poetry run pylint {PYTHON_DIRS_STR}')
 
 
-@task
-def scm_init(ctx):
+def scm_init(ctx, gitflow=True):
     """Init scm repo (if required).
 
     Raises:
@@ -70,26 +74,36 @@ def scm_init(ctx):
     if not Path('.gitignore').is_file():
         raise Failure('.gitignore does not exist')
 
-    if not Path('.git').is_dir():
-        uri_remote = 'git@github.com:{}/{}.git'.format(GITHUB_USERNAME,
-                                                       GITHUB_SLUG
-                                                      )
+    is_new_repo = not Path('.git').is_dir()
+    uri_remote = f'git@github.com:{GITHUB_USERNAME}/{GITHUB_SLUG}.git'
+    commit_msg = f'new package from midwatch/cc-py3-pkg ({CC_VERSION})'
+    branches = ['main']
 
+    if is_new_repo:
         ctx.run('git init')
         ctx.run('git add .')
-        ctx.run('git commit -m "new package from midwatch/cc-py3-pkg ({})"'.format(CC_VERSION))
+        ctx.run('git commit -m "{commit_msg}"')
         ctx.run('git branch -M main')
         ctx.run('git remote add origin {}'.format(uri_remote))
         ctx.run('git tag -a "v_0.0.0" -m "cookiecutter ref"')
+
+    if gitflow:
+        ctx.run('git flow init -d')
+        ctx.run('git flow config set versiontagprefix v_')
+        branches.append('develop')
+
+    if is_new_repo:
+        for branch in branches:
+            ctx.run(f'git push -u origin {branch}')
+
+        ctx.run('git push --tags')
 
 
 @task
 def scm_push(ctx):
     """Push all branches and tags to origin."""
 
-    for branch in ('develop', 'main'):
-        ctx.run('git push origin {}'.format(branch))
-
+    ctx.run('git push --all')
     ctx.run('git push --tags')
 
 
@@ -99,13 +113,15 @@ def scm_status(ctx):
     ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
 
 
-@task(help={'part': "major, minor, or patch"})
+@task(help={'part': "major, minor, or patch/hotfix"})
 def bumpversion(ctx, part):
     """Bump project version
 
     Raises:
         Failure: part not in [major, minor, patch]
     """
+    part = 'patch' if part == 'hotfix' else part
+
     if part not in ['major', 'minor', 'patch']:
         raise Failure('Not a valid part')
 
@@ -129,7 +145,7 @@ def build(ctx):
 
 
 @task(help={'check': "Checks if source is formatted without applying changes"})
-def format(ctx, check=False):
+def format_yapf(ctx, check=False):
     """Format code"""
     yapf_options = '--recursive {}'.format('--diff' if check else '--in-place')
     ctx.run(f'poetry run yapf {yapf_options} {PYTHON_DIRS_STR}')
@@ -139,16 +155,10 @@ def format(ctx, check=False):
 
 
 @task
-def init(ctx):
-    """Initialize freshly cloned repo"""
+def init_repo(ctx):
+    """Initialize freshly cloned repo."""
     ctx.run('poetry install')
-
     scm_init(ctx)
-
-    ctx.run('git flow init -d')
-    ctx.run('git flow config set versiontagprefix v_')
-
-    scm_push(ctx)
 
 
 @task(lint_pylint, lint_pycodestyle, lint_pydocstyle)
@@ -163,16 +173,27 @@ def release(ctx):
     """
     ctx.run("poetry publish")
 
+@task(clean)
+def test_accept(ctx):
+    pass
+
 
 @task
+def test_pytest(ctx):
+    """Run tests"""
+    # ctx.run('poetry run pytest')
+
+
+@task(test_pytest, test_accept)
 def test(ctx):
     """Run tests"""
-    ctx.run('poetry run pytest')
 
 
 scm = Collection()
 scm.add_task(scm_push, name="push")
 scm.add_task(scm_status, name="status")
 
-ns = Collection(build, bumpversion, clean, format, init, lint, release, test)
+ns = Collection(build, bumpversion, clean, init_repo, lint, release, test)
+ns.add_task(format_yapf, name="format")
+
 ns.add_collection(scm, name="scm")
