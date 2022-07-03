@@ -46,15 +46,17 @@ def scm_init(ctx, gitflow=True):
         branches.append('develop')
 
     if is_new_repo:
-        for branch in ('develop', 'main'):
+        for branch in branches:
             ctx.run(f'git push -u origin {branch}')
 
+        ctx.run('git push --tags')
 
 @task
 def scm_push(ctx):
     """Push all branches and tags to origin."""
 
-    ctx.run('git push origin --all --tags')
+    ctx.run('git push --all')
+    ctx.run('git push --tags')
 
 
 @task
