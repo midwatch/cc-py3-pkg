@@ -59,6 +59,12 @@ def lint_pylint(ctx):
     ctx.run(f'poetry run pylint {PYTHON_DIRS_STR}')
 
 
+@task
+def lint_similar(ctx):
+    """Run pylint test for duplicate code."""
+    ctx.run(f'poetry run pylint --disable=all --enable=similarities {PYTHON_DIRS_STR}')
+
+
 @task(pre=[clean_build, clean_python])
 def clean(ctx):     # pylint: disable=unused-argument
     """Runs all clean sub-tasks."""
@@ -117,7 +123,8 @@ def test(ctx):  # pylint: disable=unused-argument
     """Run tests"""
 
 
-ns = Collection(build, bumpversion, clean, init_repo, lint, release, test, test_typing)
+ns = Collection(build, bumpversion, clean, init_repo, lint, lint_similar,
+    release, test, test_typing)
 ns.add_task(format_yapf, name="format")
 
 ns.add_collection(git.collection, name="scm")
