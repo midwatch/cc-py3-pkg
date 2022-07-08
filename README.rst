@@ -32,18 +32,17 @@ Features
 * All development tasks (init, lint, format, test, etc) automated by invoke_
 
 
-Limitations
---------
-
-* No tox_ testing. Intended for a single deployment target only (eg Ubuntu 20.04 LTS/Python 3.8.x)
-* Intended for Pyton CLI apps installed per user using pipx_
-* Host dependencies need to be manually installed before installing app
-
-
 Quickstart
 ----------
 
-Coming soon
+.. code-block:: console
+
+  $ cookiecutter gh:midwatch/cc-py3-pkg
+  $ cd <github-slug>
+  $ vagrant up && vagrant reload
+  $ vagrant ssh
+  $ cd /vagrant
+  $ inv init-repo
 
 
 .. _gitflow: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
