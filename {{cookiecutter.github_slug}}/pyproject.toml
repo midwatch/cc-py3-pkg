@@ -29,10 +29,12 @@ typer = "*"
 [tool.poetry.dev-dependencies]
 bump2version = "*"
 isort = "*"
+mypy = "*"
 pycodestyle = "*"
 pydocstyle = "*"
 pylint = "*"
 pytest = "*"
+toml = "*"
 yapf = "*"
 
 {% if cookiecutter.enable_cli|lower == 'y' -%}

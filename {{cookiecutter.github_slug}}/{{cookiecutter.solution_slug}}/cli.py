@@ -1,18 +1,18 @@
 """Console script for {{cookiecutter.solution_name}}."""
 
-import sys
+import typer
 
-import click
+app = typer.Typer()
 
 
-@click.command()
-def main():
-    """Console script for {{cookiecutter.solution_slug}}."""
-    click.echo("Replace this message by putting your code into "
-               "{{cookiecutter.solution_slug}}.cli.main")
-    click.echo("See click documentation at https://click.palletsprojects.com/")
-    return 0
+@app.command()
+def main() -> None:
+    """Console script for python_boilerplate."""
+    typer.echo("Replace this message by putting your code into "
+               "python_boilerplate.cli.main")
+    typer.echo("See click documentation at https://click.palletsprojects.com/")
 
 
 if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+    # sys.exit(main())  # pragma: no cover
+    app()

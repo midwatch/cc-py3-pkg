@@ -105,15 +105,19 @@ def test_accept(ctx):   # pylint: disable=unused-argument
 @task
 def test_pytest(ctx):   # pylint: disable=unused-argument
     """Run pytest tests"""
-    # ctx.run('poetry run pytest')
+    ctx.run('poetry run pytest')
 
+@task
+def test_typing(ctx):
+    """Run mypy typing test."""
+    ctx.run('poetry run mypy --disallow-untyped-defs python_boilerplate/')
 
 @task(test_pytest, test_accept)
 def test(ctx):  # pylint: disable=unused-argument
     """Run tests"""
 
 
-ns = Collection(build, bumpversion, clean, init_repo, lint, release, test)
+ns = Collection(build, bumpversion, clean, init_repo, lint, release, test, test_typing)
 ns.add_task(format_yapf, name="format")
 
 ns.add_collection(git.collection, name="scm")
