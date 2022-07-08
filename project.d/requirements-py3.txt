@@ -1,2 +1,4 @@
 invoke
+mw-dry-invoke
 pip
+pylint
