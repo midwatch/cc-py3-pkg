@@ -10,7 +10,7 @@ from mw_dry_invoke import git
 GITHUB_USERNAME = "{{ cookiecutter.github_username }}"
 GITHUB_SLUG = "{{ cookiecutter.github_slug }}"
 SOLUTION_SLUG = "{{ cookiecutter.solution_slug }}"
-CC_VERSION = "0.4.0"
+CC_VERSION = "0.5.0"
 
 ROOT_DIR = Path(__file__).parent
 SOURCE_DIR = ROOT_DIR.joinpath(SOLUTION_SLUG)
