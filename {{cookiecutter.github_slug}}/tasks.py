@@ -1,19 +1,16 @@
+"invoke task definition"
 from pathlib import Path
 
 from invoke import Collection
 from invoke import task
-from invoke.exceptions import Failure
 
-from pathlib import Path
-
-from invoke import Collection
-from invoke import task
-from invoke.exceptions import Failure
+from mw_dry_invoke import bumpversion
+from mw_dry_invoke import git
 
 GITHUB_USERNAME = "{{ cookiecutter.github_username }}"
 GITHUB_SLUG = "{{ cookiecutter.github_slug }}"
 SOLUTION_SLUG = "{{ cookiecutter.solution_slug }}"
-CC_VERSION = "0.0.0"
+CC_VERSION = "0.5.0"
 
 ROOT_DIR = Path(__file__).parent
 SOURCE_DIR = ROOT_DIR.joinpath(SOLUTION_SLUG)
@@ -62,78 +59,15 @@ def lint_pylint(ctx):
     ctx.run(f'poetry run pylint {PYTHON_DIRS_STR}')
 
 
-def scm_init(ctx, gitflow=True):
-    """Init scm repo (if required).
-
-    Raises:
-        Failure: .gitignore does not exist
-
-    Returns:
-        None
-    """
-    if not Path('.gitignore').is_file():
-        raise Failure('.gitignore does not exist')
-
-    is_new_repo = not Path('.git').is_dir()
-    uri_remote = f'git@github.com:{GITHUB_USERNAME}/{GITHUB_SLUG}.git'
-    commit_msg = f'new package from midwatch/cc-py3-pkg ({CC_VERSION})'
-    branches = ['main']
-
-    if is_new_repo:
-        ctx.run('git init')
-        ctx.run('git add .')
-        ctx.run('git commit -m "{commit_msg}"')
-        ctx.run('git branch -M main')
-        ctx.run('git remote add origin {}'.format(uri_remote))
-        ctx.run('git tag -a "v_0.0.0" -m "cookiecutter ref"')
-
-    if gitflow:
-        ctx.run('git flow init -d')
-        ctx.run('git flow config set versiontagprefix v_')
-        branches.append('develop')
-
-    if is_new_repo:
-        for branch in branches:
-            ctx.run(f'git push -u origin {branch}')
-
-        ctx.run('git push --tags')
-
-
 @task
-def scm_push(ctx):
-    """Push all branches and tags to origin."""
-
-    ctx.run('git push --all')
-    ctx.run('git push --tags')
-
-
-@task
-def scm_status(ctx):
-    """Show status of remote branches."""
-    ctx.run('git for-each-ref --format="%(refname:short) %(upstream:track)" refs/heads')
-
-
-@task(help={'part': "major, minor, or patch/hotfix"})
-def bumpversion(ctx, part):
-    """Bump project version
-
-    Raises:
-        Failure: part not in [major, minor, patch]
-    """
-    part = 'patch' if part == 'hotfix' else part
-
-    if part not in ['major', 'minor', 'patch']:
-        raise Failure('Not a valid part')
-
-    ctx.run(f'poetry run bump2version --no-tag {part}')
+def lint_similar(ctx):
+    """Run pylint test for duplicate code."""
+    ctx.run(f'poetry run pylint --disable=all --enable=similarities {PYTHON_DIRS_STR}')
 
 
 @task(pre=[clean_build, clean_python])
-def clean(ctx):
-    """
-    Runs all clean sub-tasks
-    """
-    pass
+def clean(ctx):     # pylint: disable=unused-argument
+    """Runs all clean sub-tasks."""
 
 
 @task(clean)
@@ -144,56 +78,53 @@ def build(ctx):
     ctx.run("poetry build")
 
 
-@task(help={'check': "Checks if source is formatted without applying changes"})
-def format_yapf(ctx, check=False):
+@task()
+def format_yapf(ctx):
     """Format code"""
-    yapf_options = '--recursive {}'.format('--diff' if check else '--in-place')
-    ctx.run(f'poetry run yapf {yapf_options} {PYTHON_DIRS_STR}')
-
-    isort_options = '{}'.format('--check-only --diff' if check else '')
-    ctx.run(f'poetry run isort {isort_options} {PYTHON_DIRS_STR}')
+    ctx.run(f'poetry run yapf --in-place {PYTHON_DIRS_STR}')
+    ctx.run(f'poetry run isort {PYTHON_DIRS_STR}')
 
 
 @task
 def init_repo(ctx):
     """Initialize freshly cloned repo."""
     ctx.run('poetry install')
-    scm_init(ctx)
+    git.init(ctx, GITHUB_USERNAME, GITHUB_SLUG, CC_VERSION)
 
 
 @task(lint_pylint, lint_pycodestyle, lint_pydocstyle)
-def lint(ctx):
+def lint(ctx):  # pylint: disable=unused-argument
     """Run all linters"""
 
 
 @task(pre=[clean, build])
 def release(ctx):
-    """
-    Make a release of the python package to pypi
-    """
+    """Release package to pypi."""
     ctx.run("poetry publish")
 
+
 @task(clean)
-def test_accept(ctx):
-    pass
+def test_accept(ctx):   # pylint: disable=unused-argument
+    "Run acceptance tests."
 
 
 @task
-def test_pytest(ctx):
-    """Run tests"""
-    # ctx.run('poetry run pytest')
+def test_pytest(ctx):   # pylint: disable=unused-argument
+    """Run pytest tests"""
+    ctx.run('poetry run pytest')
 
+@task
+def test_typing(ctx):
+    """Run mypy typing test."""
+    ctx.run('poetry run mypy --disallow-untyped-defs python_boilerplate/')
 
 @task(test_pytest, test_accept)
-def test(ctx):
+def test(ctx):  # pylint: disable=unused-argument
     """Run tests"""
 
 
-scm = Collection()
-scm.add_task(scm_push, name="push")
-scm.add_task(scm_status, name="status")
-
-ns = Collection(build, bumpversion, clean, init_repo, lint, release, test)
+ns = Collection(build, bumpversion, clean, init_repo, lint, lint_similar,
+    release, test, test_typing)
 ns.add_task(format_yapf, name="format")
 
-ns.add_collection(scm, name="scm")
+ns.add_collection(git.collection, name="scm")
