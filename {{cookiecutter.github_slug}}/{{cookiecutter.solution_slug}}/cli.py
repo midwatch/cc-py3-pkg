@@ -1,7 +1,11 @@
 """Console script for {{cookiecutter.solution_name}}."""
+import logging
 
 import typer
 
+logging.basicConfig(format='%(asctime)sZ | %(levelname)s | %(message)s',
+    datefmt="%Y-%m-%dT%H:%M:%S")
+logging.Formatter.converter = gmtime
 app = typer.Typer()
 
 
